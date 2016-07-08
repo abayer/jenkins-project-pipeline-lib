@@ -43,17 +43,6 @@ String defaultJdk() {
 }
 
 /**
- * Add timestamps to all node logs.
- */
-def timestampedNode(String label, Closure body) {
-    node(label) {
-        wrap([$class: 'TimestamperBuildWrapper']) {
-            body();
-        }
-    }
-}
-
-/**
  * Unzips the version file in jenkins.war and parses it for the version string.
  * <strong>Side effect:</strong> A file called {@code jenkins-version.txt}
  * will be left in the cwd containing the same data.
@@ -93,9 +82,9 @@ String getJenkinsVersion(String jenkinsWar) {
 void stashJenkinsWar(String url,
                      String label = 'hi-speed',
                      boolean getVersion = true) { 
-    timestampedNode(label) { 
+    node(label) { 
         ws('warDown') {
-            sh 'rm -rf *'
+            deleteDir()
             if (url == null) {
                 error 'required parameter url is missing'
             } else if (url.startsWith("mvn://")) {

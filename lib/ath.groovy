@@ -74,7 +74,7 @@ void singleAthBranch(def functions,
         nodeLabel = athLabel()
     }
     
-    functions.timestampedNode(nodeLabel) {
+    node(nodeLabel) {
         unstash 'ath-stash'
         unstash 'jenkins.war'
         if (exclusions != null) {
@@ -85,7 +85,7 @@ void singleAthBranch(def functions,
         timeout(time: 6, unit: TimeUnit.HOURS) { //TODO might need trimming
             wrap([$class: 'Xvnc', takeScreenshot: false, useXauthority: true]) {
                 functions.withMaven {
-                    sh 'mvn clean test -B -Dmaven.test.failure.ignore=true -DforkCount=1 -s "$(pwd)/settings.xml" ' + mvnProps
+                    sh 'mvn clean test -B -Dmaven.test.failure.ignore=true -DforkCount=1 ' + mvnProps
                 }
             }
             try {
@@ -114,7 +114,7 @@ def athLabel() {
 }
 
 def stashAth(def functions) {
-    functions.timestampedNode(athLabel()) {
+    node(athLabel()) {
         checkout scm
         stash excludes: '.git/**', name: 'ath-stash'
     }
